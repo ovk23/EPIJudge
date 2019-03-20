@@ -1,17 +1,44 @@
-package epi;
+package epi.dynamicProgramming;
+
 import epi.test_framework.EpiTest;
 import epi.test_framework.GenericTest;
 import epi.test_framework.TestFailure;
 import epi.test_framework.TimedExecutor;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+
+import java.util.*;
+
 public class IsStringDecomposableIntoWords {
 
   public static List<String>
   decomposeIntoDictionaryWords(String domain, Set<String> dictionary) {
-    // TODO - you fill in here.
-    return Collections.emptyList();
+    int[] lastLength = new int[domain.length()];
+    Arrays.fill(lastLength, -1);
+
+    for(int i = 0; i < domain.length(); ++i){
+      if(dictionary.contains(domain.substring(0, i + 1))){
+        lastLength[i] = i + 1;
+        continue;
+      }
+
+      for(int j = 0; j < i; ++j){
+        if(lastLength[j] != -1 && dictionary.contains(domain.substring(j + 1, i + 1))){
+          lastLength[i] = i - j;
+          break;
+        }
+      }
+    }
+
+    List<String> decomposition = new ArrayList<>();
+
+    if(lastLength[lastLength.length - 1] != -1){
+      int idx = domain.length() - 1;
+      while(idx >= 0){
+        decomposition.add(domain.substring(idx + 1 - lastLength[idx], idx + 1));
+        idx -= lastLength[idx];
+      }
+    }
+    Collections.reverse(decomposition);
+    return decomposition;
   }
   @EpiTest(testDataFile = "is_string_decomposable_into_words.tsv")
   public static void decomposeIntoDictionaryWordsWrapper(TimedExecutor executor,
