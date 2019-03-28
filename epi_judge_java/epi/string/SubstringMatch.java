@@ -15,14 +15,17 @@ public class SubstringMatch {
 
     final int BASE = 26;
     int thash = 0, shash = 0;
-    int powerS = 1;
+    int powerS = -558124416;
 
+    int m = s.length() - 1;
+//    int k =  m < 0 ? (int)Math.pow(BASE, 0) : (int)Math.pow(BASE, m);
     for(int i = 0; i < s.length(); i++){
-      powerS = i > 0 ? powerS * BASE : 1; // BASE ^ i
+//      powerS = i > 0 ? powerS * BASE : 1; // BASE ^ i
       thash = thash * BASE + t.charAt(i);
       shash = shash * BASE + s.charAt(i);
     }
 
+    System.out.println(powerS);
     for(int i = s.length(); i < t.length(); i++){
       if(thash == shash && t.substring(i - s.length(), i).equals(s))
         return i - s.length();
@@ -38,10 +41,11 @@ public class SubstringMatch {
   }
 
   public static void main(String[] args) {
-    System.exit(
-        GenericTest
-            .runFromAnnotations(args, "SubstringMatch.java",
-                                new Object() {}.getClass().getEnclosingClass())
-            .ordinal());
+      System.out.println(rabinKarp("abbaabbbabaaaabbabbaabbaaaaabaaabbaaaabbbbbabbbbaabbbabaaaaaaaaaaaaaabbaabababaabbbbbbbbbbbbbbbbaba", "aabbabba"));
+//    System.exit(
+//        GenericTest
+//            .runFromAnnotations(args, "SubstringMatch.java",
+//                                new Object() {}.getClass().getEnclosingClass())
+//            .ordinal());
   }
 }
