@@ -25,7 +25,6 @@ public class LruCache {
   }
 
   public Integer lookup(Integer key) {
-
     return isbnToPrice.getOrDefault(key, -1);
   }
 
