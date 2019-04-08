@@ -9,67 +9,69 @@ import java.util.*;
 
 public class IsStringDecomposableIntoWords {
 
-  public static List<String>
-  decomposeIntoDictionaryWords(String domain, Set<String> dictionary) {
-    int[] lastLength = new int[domain.length()];
-    Arrays.fill(lastLength, -1);
+    public static List<String>
+    decomposeIntoDictionaryWords(String domain, Set<String> dictionary) {
+        int[] lastLength = new int[domain.length()];
+        Arrays.fill(lastLength, -1);
 
-    for(int i = 0; i < domain.length(); ++i){
-      if(dictionary.contains(domain.substring(0, i + 1))){
-        lastLength[i] = i + 1;
-        continue;
-      }
+        for (int i = 0; i < domain.length(); ++i) {
+            if (dictionary.contains(domain.substring(0, i + 1))) {
+                lastLength[i] = i + 1;
+                continue;
+            }
 
-      for(int j = 0; j < i; ++j){
-        if(lastLength[j] != -1 && dictionary.contains(domain.substring(j + 1, i + 1))){
-          lastLength[i] = i - j;
-          break;
+            for (int j = 0; j < i; ++j) {
+                if (lastLength[j] != -1 && dictionary.contains(domain.substring(j + 1, i + 1))) {
+                    lastLength[i] = i - j;
+                    break;
+                }
+            }
         }
-      }
+
+        List<String> decomposition = new ArrayList<>();
+
+        if (lastLength[lastLength.length - 1] != -1) {
+            int idx = domain.length() - 1;
+            while (idx >= 0) {
+                decomposition.add(domain.substring(idx + 1 - lastLength[idx], idx + 1));
+                idx -= lastLength[idx];
+            }
+        }
+        Collections.reverse(decomposition);
+        return decomposition;
     }
 
-    List<String> decomposition = new ArrayList<>();
+    @EpiTest(testDataFile = "is_string_decomposable_into_words.tsv")
+    public static void decomposeIntoDictionaryWordsWrapper(TimedExecutor executor,
+                                                           String domain,
+                                                           Set<String> dictionary,
+                                                           Boolean decomposable)
+            throws Exception {
+        List<String> result =
+                executor.run(() -> decomposeIntoDictionaryWords(domain, dictionary));
 
-    if(lastLength[lastLength.length - 1] != -1){
-      int idx = domain.length() - 1;
-      while(idx >= 0){
-        decomposition.add(domain.substring(idx + 1 - lastLength[idx], idx + 1));
-        idx -= lastLength[idx];
-      }
-    }
-    Collections.reverse(decomposition);
-    return decomposition;
-  }
-  @EpiTest(testDataFile = "is_string_decomposable_into_words.tsv")
-  public static void decomposeIntoDictionaryWordsWrapper(TimedExecutor executor,
-                                                         String domain,
-                                                         Set<String> dictionary,
-                                                         Boolean decomposable)
-      throws Exception {
-    List<String> result =
-        executor.run(() -> decomposeIntoDictionaryWords(domain, dictionary));
+        if (!decomposable) {
+            if (!result.isEmpty()) {
+                throw new TestFailure("domain is not decomposable");
+            }
+            return;
+        }
 
-    if (!decomposable) {
-      if (!result.isEmpty()) {
-        throw new TestFailure("domain is not decomposable");
-      }
-      return;
+        if (result.stream().anyMatch(s -> !dictionary.contains(s))) {
+            throw new TestFailure("Result uses words not in dictionary");
+        }
+
+        if (!String.join("", result).equals(domain)) {
+            throw new TestFailure("Result is not composed into domain");
+        }
     }
 
-    if (result.stream().anyMatch(s -> !dictionary.contains(s))) {
-      throw new TestFailure("Result uses words not in dictionary");
+    public static void main(String[] args) {
+        System.exit(
+                GenericTest
+                        .runFromAnnotations(args, "IsStringDecomposableIntoWords.java",
+                                new Object() {
+                                }.getClass().getEnclosingClass())
+                        .ordinal());
     }
-
-    if (!String.join("", result).equals(domain)) {
-      throw new TestFailure("Result is not composed into domain");
-    }
-  }
-
-  public static void main(String[] args) {
-    System.exit(
-        GenericTest
-            .runFromAnnotations(args, "IsStringDecomposableIntoWords.java",
-                                new Object() {}.getClass().getEnclosingClass())
-            .ordinal());
-  }
 }

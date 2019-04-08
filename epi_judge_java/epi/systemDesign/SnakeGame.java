@@ -10,13 +10,13 @@ class SnakeGame {
         int x;
         int y;
 
-        Location(int x, int y){
+        Location(int x, int y) {
             this.x = x;
             this.y = y;
         }
 
         @Override
-        public String toString(){
+        public String toString() {
             return x + "," + y;
         }
     }
@@ -32,14 +32,14 @@ class SnakeGame {
         this.board = new int[height][width];
         this.food = new ArrayDeque<>();
 
-        for(int[] row: food){
+        for (int[] row : food) {
             board[row[0]][row[1]] = 1;
             this.food.add(new Location(row[0], row[1]));
         }
 
         this.totalFood = this.food.isEmpty()
-                ?   0
-                :   this.food.size();
+                ? 0
+                : this.food.size();
 
         Location initSnakeLocation = new Location(0, 0);
         this.snakeLocationSet = new LinkedHashSet<>();
@@ -51,7 +51,7 @@ class SnakeGame {
 
     public int move(Character direction) {
         int x = 0, y = 0;
-        switch(direction){
+        switch (direction) {
             case 'U':
                 return moveSnake(new Location(-1, 0));
             case 'D':
@@ -60,24 +60,24 @@ class SnakeGame {
                 return moveSnake(new Location(0, 1));
             case 'L':
                 return moveSnake(new Location(0, -1));
-                default:
-                    return -1;
+            default:
+                return -1;
         }
     }
 
-    private boolean checkIfNewLocationValid(Location location){
+    private boolean checkIfNewLocationValid(Location location) {
         return location.x >= 0 && location.x <= this.board.length - 1
                 && location.y >= 0 && location.y <= this.board[0].length - 1
                 && !this.snakeLocationSet.contains(location.toString());
     }
 
-    private int moveSnake(Location move){
+    private int moveSnake(Location move) {
         Location oldLocation = this.snakePosition.peek();
         Location newLocation = new Location(oldLocation.x + move.x, oldLocation.y + move.y);
 
-        if(!checkIfNewLocationValid(newLocation)){
+        if (!checkIfNewLocationValid(newLocation)) {
             return -1;
-        } else if(this.board[newLocation.x][newLocation.y] != 1) {
+        } else if (this.board[newLocation.x][newLocation.y] != 1) {
             Location lastLocation = this.snakePosition.pollLast();
             this.snakeLocationSet.remove(lastLocation.toString());
             this.snakePosition.addFirst(newLocation);
@@ -94,10 +94,11 @@ class SnakeGame {
     /**
      * ["SnakeGame","move","move","move","move","move","move"]
      * [[3,2,[[1,2],[0,1]]],["R"],["D"],["R"],["U"],["L"],["U"]]
+     *
      * @param args
      */
     public static void main(String[] args) {
-        int[][] food = {{1,2},{0,1}};
+        int[][] food = {{1, 2}, {0, 1}};
         SnakeGame game = new SnakeGame(3, 2, food);
 
         System.out.println(game.move('R'));

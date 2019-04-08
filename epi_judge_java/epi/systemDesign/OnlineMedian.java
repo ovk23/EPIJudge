@@ -10,7 +10,9 @@ class RunningMedian {
     private Queue<Integer> minHeap;
     private Queue<Integer> maxHeap;
 
-    /** initialize your data structure here. */
+    /**
+     * initialize your data structure here.
+     */
     RunningMedian() {
         this.integerList = new ArrayList<>();
         this.runningMedian = new ArrayList<>();
@@ -25,14 +27,14 @@ class RunningMedian {
         this.minHeap.add(num);
         this.maxHeap.add(this.minHeap.remove());
 
-        if(this.maxHeap.size() > this.minHeap.size()){
+        if (this.maxHeap.size() > this.minHeap.size()) {
             this.minHeap.add(this.maxHeap.remove());
         }
 
         this.runningMedian.add(this.maxHeap.size() == this.minHeap.size()
-            ?   0.5 * (this.maxHeap.peek() + this.minHeap.peek())
-                :   this.minHeap.peek().doubleValue()
-                );
+                ? 0.5 * (this.maxHeap.peek() + this.minHeap.peek())
+                : this.minHeap.peek().doubleValue()
+        );
     }
 
     double findMedian() {
@@ -41,7 +43,7 @@ class RunningMedian {
 }
 
 public class OnlineMedian {
-    public static void main(String[] args){
+    public static void main(String[] args) {
         RunningMedian runningMedian = new RunningMedian();
 
         Random r = new Random();
